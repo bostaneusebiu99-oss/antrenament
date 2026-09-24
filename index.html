@@ -135,7 +135,7 @@ button.ghost{background:var(--surface);color:var(--text);border:1px solid var(--
 
 var URL_ = "https://ifsdpceyorfozzeaordv.supabase.co";
 var KEY  = "sb_publishable_lRgu7w251_wbTdWxuf080g_UyOYK5PS";
-var H    = { apikey: KEY, Authorization: "Bearer " + KEY };
+var H    = { apikey: KEY };   /* cheile sb_publishable_ nu sunt JWT: NU merg pe Authorization */
 
 var TABLES = ["clients","measurements","exercises","routines","workouts","workout_sets"];
 var lines = [];
