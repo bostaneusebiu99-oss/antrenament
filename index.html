@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Bostisthetics · Verificare</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F6F1E7; --surface:#FFFFFF; --surface-2:#EFE7D6;
+  --text:#16141A; --muted:#6B6252; --border:#E1D6BE;
+  --accent:#C97A00; --accent-strong:#9A5D00; --accent-ink:#FFFFFF;
+  --ok:#3F6B54; --ok-bg:#E4EEE6;
+  --bad:#96402A; --bad-bg:#F3DDD3;
+  --warn:#8A6414; --warn-bg:#F3E7C8;
+  --shadow:0 1px 2px rgba(22,20,26,.06),0 6px 18px rgba(22,20,26,.07);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#16141A; --surface:#1D1A24; --surface-2:#242030;
+    --text:#F3EFE6; --muted:#A79E8D; --border:#332E3D;
+    --accent:#F59B00; --accent-strong:#FFB238; --accent-ink:#16141A;
+    --ok:#8FCBAA; --ok-bg:#1E2B22;
+    --bad:#E3806A; --bad-bg:#33201B;
+    --warn:#E5B94E; --warn-bg:#332A14;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35);
+  }
+}
+*{box-sizing:border-box;}
+html{overflow-x:hidden;}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:'Work Sans',system-ui,-apple-system,sans-serif;
+  font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;
+  overflow-x:hidden;max-width:100%;
+  padding:0 16px calc(40px + env(safe-area-inset-bottom,0px));
+}
+.wrap{max-width:620px;margin:0 auto;}
+header{padding-block:26px 16px;}
+.kicker{
+  font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--accent-strong);font-weight:600;
+}
+h1{font-family:'Oswald',sans-serif;text-transform:uppercase;margin:3px 0 0;
+  font-size:26px;font-weight:700;letter-spacing:.01em;}
+.sub{color:var(--muted);font-size:14px;margin-top:6px;}
+
+.verdict{
+  border-radius:12px;padding:16px 16px;margin:18px 0 6px;
+  border:1px solid var(--border);background:var(--surface-2);
+}
+.verdict.ok{background:var(--ok-bg);border-color:var(--ok);}
+.verdict.bad{background:var(--bad-bg);border-color:var(--bad);}
+.verdict.warn{background:var(--warn-bg);border-color:var(--warn);}
+.verdict b{display:block;font-family:'Oswald',sans-serif;text-transform:uppercase;
+  font-size:18px;font-weight:600;margin-bottom:4px;}
+.verdict.ok b{color:var(--ok);} .verdict.bad b{color:var(--bad);} .verdict.warn b{color:var(--warn);}
+.verdict span{font-size:14px;}
+
+.section-label{
+  font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--muted);font-weight:600;margin:24px 0 9px;
+}
+.row{
+  display:flex;align-items:flex-start;gap:11px;
+  background:var(--surface);border:1px solid var(--border);border-radius:10px;
+  padding:11px 13px;margin-bottom:7px;box-shadow:var(--shadow);
+}
+.mark{flex:0 0 auto;width:22px;height:22px;border-radius:50%;margin-top:1px;
+  display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;}
+.mark.ok{background:var(--ok);color:var(--bg);}
+.mark.bad{background:var(--bad);color:var(--bg);}
+.mark.warn{background:var(--warn);color:var(--bg);}
+.mark.wait{background:var(--border);color:var(--muted);}
+.rt{flex:1;min-width:0;}
+.rt b{display:block;font-size:14.5px;font-weight:600;overflow-wrap:anywhere;}
+.rt span{display:block;font-size:13px;color:var(--muted);margin-top:2px;overflow-wrap:anywhere;}
+
+.report{
+  margin-top:22px;background:var(--surface-2);border:1px solid var(--border);
+  border-radius:11px;padding:13px;
+}
+.report .section-label{margin-top:0;}
+pre{
+  margin:0;font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:1.55;
+  white-space:pre-wrap;word-break:break-word;color:var(--text);
+}
+button{
+  font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;
+  background:var(--accent);color:var(--accent-ink);border:none;border-radius:9px;
+  padding:12px 16px;width:100%;margin-top:11px;
+}
+button.ghost{background:var(--surface);color:var(--text);border:1px solid var(--border);}
+.foot{margin-top:26px;font-size:12.5px;color:var(--muted);
+  font-family:'IBM Plex Mono',monospace;letter-spacing:.04em;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="kicker">Bostisthetics</div>
+    <h1>Verificare bază de date</h1>
+    <div class="sub">Pagina asta nu schimbă nimic. Doar întreabă baza de date dacă e pregătită.</div>
+  </header>
+
+  <div class="verdict" id="verdict"><b>Se verifică…</b><span>Durează câteva secunde.</span></div>
+
+  <div class="section-label">Conexiune</div>
+  <div id="conn"></div>
+
+  <div class="section-label">Tabele</div>
+  <div id="tables"></div>
+
+  <div class="section-label">Securitate</div>
+  <div id="sec"></div>
+
+  <div class="section-label">Conturi</div>
+  <div id="auth"></div>
+
+  <div class="report">
+    <div class="section-label">De trimis lui Claude</div>
+    <pre id="report">…</pre>
+    <button id="copy">Copiază raportul</button>
+    <button class="ghost" id="again">Verifică din nou</button>
+  </div>
+
+  <div class="foot">@bostisthetics</div>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+var URL_ = "https://ifsdpceyorfozzeaordv.supabase.co";
+var KEY  = "sb_publishable_lRgu7w251_wbTdWxuf080g_UyOYK5PS";
+var H    = { apikey: KEY, Authorization: "Bearer " + KEY };
+
+var TABLES = ["clients","measurements","exercises","routines","workouts","workout_sets"];
+var lines = [];
+
+function el(tag, cls, txt){
+  var n = document.createElement(tag);
+  if(cls) n.className = cls;
+  if(txt != null) n.textContent = txt;
+  return n;
+}
+function row(parent, state, title, detail){
+  var r = el("div","row");
+  var m = el("div","mark " + state, state==="ok" ? "✓" : state==="bad" ? "✗" : state==="warn" ? "!" : "·");
+  r.appendChild(m);
+  var t = el("div","rt");
+  t.appendChild(el("b", null, title));
+  if(detail) t.appendChild(el("span", null, detail));
+  r.appendChild(t);
+  document.getElementById(parent).appendChild(r);
+  lines.push((state==="ok"?"[OK]  ":state==="bad"?"[EROARE] ":state==="warn"?"[ATENTIE] ":"[?] ") + title + (detail ? " — " + detail : ""));
+}
+function setVerdict(state, title, detail){
+  var v = document.getElementById("verdict");
+  v.className = "verdict " + state;
+  v.innerHTML = "";
+  v.appendChild(el("b", null, title));
+  v.appendChild(el("span", null, detail));
+}
+function paintReport(){
+  document.getElementById("report").textContent = lines.join("\n");
+}
+
+function req(path, opts){
+  opts = opts || {};
+  var o = { method: opts.method || "GET", headers: {} };
+  for(var k in H) o.headers[k] = H[k];
+  if(opts.body){ o.headers["Content-Type"] = "application/json"; o.body = JSON.stringify(opts.body); }
+  if(opts.prefer) o.headers["Prefer"] = opts.prefer;
+  return fetch(URL_ + path, o).then(function(r){
+    return r.text().then(function(t){
+      var j = null;
+      try { j = JSON.parse(t); } catch(e){}
+      return { status: r.status, text: t, json: j };
+    });
+  });
+}
+
+function run(){
+  lines = [];
+  ["conn","tables","sec","auth"].forEach(function(id){ document.getElementById(id).innerHTML = ""; });
+  setVerdict("", "Se verifică…", "Durează câteva secunde.");
+
+  var problems = 0, warnings = 0, alive = false;
+
+  lines.push("Proiect: " + URL_);
+  lines.push("Cheie:   " + KEY.slice(0,22) + "… (" + KEY.length + " caractere)");
+  lines.push("");
+
+  /* 1. conexiune + cheie */
+  return req("/rest/v1/").then(function(r){
+    if(r.status === 401 || r.status === 403){
+      problems++;
+      row("conn","bad","Cheia nu e acceptată","Serverul răspunde, dar refuză cheia (" + r.status + "). Probabil e trunchiată sau ștearsă.");
+      return false;
+    }
+    if(r.status >= 500){
+      problems++;
+      row("conn","bad","Proiectul nu răspunde","Cod " + r.status + ". Poate e pus pe pauză în Supabase.");
+      return false;
+    }
+    row("conn","ok","Proiectul răspunde și acceptă cheia","Cod " + r.status + " de la " + URL_.replace("https://",""));
+    alive = true;
+    return true;
+  }).catch(function(e){
+    problems++;
+    row("conn","bad","Nu se poate ajunge la proiect", String(e && e.message || e));
+    return false;
+  }).then(function(alive){
+
+    if(!alive) return;
+
+    /* 2. tabele */
+    var seq = Promise.resolve();
+    TABLES.forEach(function(t){
+      seq = seq.then(function(){
+        return req("/rest/v1/" + t + "?select=*&limit=1").then(function(r){
+          if(r.status === 200){
+            row("tables","ok", t, "există; cu cheia publică nu se vede nimic din ea, cum trebuie");
+          } else if(r.status === 404 || (r.json && r.json.code === "PGRST205")){
+            problems++;
+            row("tables","bad", t, "lipsește — schema SQL nu a rulat complet");
+          } else {
+            problems++;
+            row("tables","bad", t, "cod " + r.status + " " + (r.json && r.json.message ? "— " + r.json.message : ""));
+          }
+        }).catch(function(e){
+          problems++;
+          row("tables","bad", t, String(e && e.message || e));
+        });
+      });
+    });
+    return seq;
+
+  }).then(function(){
+
+    if(!alive) return;
+    /* 3. RLS: o scriere fără cont trebuie respinsă */
+    return req("/rest/v1/clients", {
+      method: "POST",
+      prefer: "return=representation",
+      body: { name: "TEST VERIFICARE", start_date: "2020-01-01",
+              coach_id: "00000000-0000-0000-0000-000000000000" }
+    }).then(function(r){
+      if(r.status === 401 || r.status === 403 ||
+         (r.json && (r.json.code === "42501" || /row-level security/i.test(r.json.message || "")))){
+        row("sec","ok","Scrierea fără cont e blocată","Exact cum trebuie — nimeni nu poate băga date fără să fie logat.");
+      } else if(r.status === 201 || r.status === 200){
+        problems++;
+        row("sec","bad","ATENȚIE: scrierea fără cont a reușit","Regulile de securitate nu sunt active. Nu da linkul nimănui până nu reparăm.");
+      } else if(r.status === 404){
+        row("sec","warn","Nu s-a putut testa","Tabelul clients lipsește.");
+        warnings++;
+      } else {
+        warnings++;
+        row("sec","warn","Rezultat neclar la testul de securitate","Cod " + r.status + (r.json && r.json.message ? " — " + r.json.message : ""));
+      }
+    }).catch(function(e){
+      warnings++;
+      row("sec","warn","Testul de securitate nu a putut rula", String(e && e.message || e));
+    });
+
+  }).then(function(){
+
+    if(!alive) return;
+    /* 4. conturi */
+    return req("/auth/v1/settings").then(function(r){
+      if(r.status !== 200 || !r.json){
+        warnings++;
+        row("auth","warn","Nu s-au putut citi setările de cont","Cod " + r.status);
+        return;
+      }
+      var s = r.json;
+      if(s.disable_signup){
+        problems++;
+        row("auth","bad","Înscrierea e oprită","Clienții nu-și pot face cont. Se pornește din Authentication → Sign In / Providers.");
+      } else {
+        row("auth","ok","Clienții își pot face cont","Înscrierea cu e-mail e pornită.");
+      }
+      if(s.mailer_autoconfirm){
+        row("auth","ok","Contul se activează pe loc","Nu e nevoie de e-mail de confirmare — bine pentru clienți.");
+      } else {
+        warnings++;
+        row("auth","warn","Se cere confirmare pe e-mail","Supabase trimite doar câteva e-mailuri pe oră pe planul gratuit. Mai bine o oprim.");
+      }
+    }).catch(function(e){
+      warnings++;
+      row("auth","warn","Setările de cont nu au putut fi citite", String(e && e.message || e));
+    });
+
+  }).then(function(){
+
+    if(!alive){
+      setVerdict("bad", "Nu am ajuns la baza de date",
+        "Restul verificărilor nu au mai rulat. Trimite-i raportul lui Claude.");
+      lines.unshift("REZULTAT: conexiunea sau cheia nu merg — restul nu s-a testat\n");
+      paintReport();
+      return;
+    }
+    if(problems > 0){
+      setVerdict("bad", "Ceva nu e în regulă",
+        problems + (problems === 1 ? " problemă găsită" : " probleme găsite") + ". Trimite-i raportul de mai jos lui Claude.");
+      lines.unshift("REZULTAT: " + problems + " probleme, " + warnings + " atenționări\n");
+    } else if(warnings > 0){
+      setVerdict("warn", "Merge, dar cu observații",
+        "Baza de date e bună. " + warnings + (warnings === 1 ? " lucru de reglat" : " lucruri de reglat") + " — trimite raportul.");
+      lines.unshift("REZULTAT: totul esențial OK, " + warnings + " atenționări\n");
+    } else {
+      setVerdict("ok", "Totul e pregătit",
+        "Baza de date, securitatea și conturile sunt în regulă. Trimite raportul și mergem mai departe.");
+      lines.unshift("REZULTAT: totul OK\n");
+    }
+    paintReport();
+  });
+}
+
+document.getElementById("again").onclick = function(){ run(); };
+document.getElementById("copy").onclick = function(){
+  var t = document.getElementById("report").textContent;
+  var b = document.getElementById("copy");
+  function done(){ b.textContent = "Copiat"; setTimeout(function(){ b.textContent = "Copiază raportul"; }, 1600); }
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(t).then(done).catch(fallback);
+  } else fallback();
+  function fallback(){
+    var ta = document.createElement("textarea");
+    ta.value = t; ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand("copy"); done(); }
+    catch(e){ b.textContent = "Selectează textul de mai sus"; }
+    document.body.removeChild(ta);
+  }
+};
+
+run();
+})();
+</script>
+</body>
+</html>
